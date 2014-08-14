@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>WebRTC Twilio client</title>
+
+  <link rel="stylesheet" href="//static0.twilio.com/packages/quickstart/client.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
+  <style>
+   button.nologo:before {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <button class="call" onclick="call();">Call</button>
+  <button class="hangup" onclick="hangup();">Hangup</button>
+  <button class="hangup nologo" onclick="anykey();">Any key</button>
+
+  <input type="text" id="number" name="number" placeholder="Enter a phone number to call"/>
+
+  <div id="log">Loading pigeons...</div>
+
+  <script>
+      Twilio.Device.setup("<%= token %>", {debug: true});
+
+      Twilio.Device.ready(function () {
+        $("#log").text("Ready");
+      });
+
+      Twilio.Device.error(function (error) {
+        $("#log").text("Error: " + error.message);
+      });
+
+      Twilio.Device.connect(function (conn) {
+        $("#log").text("Successfully established call");
+      });
+
+      Twilio.Device.disconnect(function (conn) {
+        $("#log").text("Call ended");
+      });
+
+      Twilio.Device.incoming(function (conn) {
+        $("#log").text("Incoming connection from " + conn.parameters.From);
+        conn.accept();
+      });
+
+      function call() {
+        var params = {"PhoneNumber": $("#number").val()};
+        Twilio.Device.connect(params);
+      }
+
+      function hangup() {
+        Twilio.Device.disconnectAll();
+      }
+
+      function anykey() {
+        var conn = Twilio.Device.activeConnection();
+        if (conn) conn.sendDigits("1");
+      }
+  </script>
+</body>
+</html>

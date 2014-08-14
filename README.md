@@ -1,2 +1,2 @@
-webrtc-twilio-client
+WebRTC Twilio Client
 ====================
